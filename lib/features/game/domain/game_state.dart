@@ -3,7 +3,7 @@ class GameState {
   GameStatus status;
   double position;
   final double winDistance = 570.0;
-  final double startPosition = 40;
+  final double startPosition = 100;
   GameState({required this.status, required this.position});
 
   GameState copyWith({GameStatus? status, double? position}) {

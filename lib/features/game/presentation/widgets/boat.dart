@@ -30,7 +30,7 @@ class Boat extends HookConsumerWidget {
     final notifier = ref.read(gameProvider.notifier);
 
     late double speed = 20;
-    final startPosition = 40.w;
+    final startPosition = 100.h;
 
     final position = useState<double>(startPosition);
 
@@ -51,6 +51,9 @@ class Boat extends HookConsumerWidget {
           Future.microtask(() {
             notifier.checkWin(position.value);
           });
+        }
+        if (game.status == GameStatus.end) {
+          t.cancel();
         }
       });
       return timer.cancel;

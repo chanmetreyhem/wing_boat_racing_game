@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ class GameScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isPressed = useState(false);
+    final timeCountDown = useState(4);
 
     final boatImages = [
       'assets/images/player_boat.png',
@@ -23,8 +25,15 @@ class GameScreen extends HookConsumerWidget {
     final notifier = ref.read(gameProvider.notifier);
 
     useEffect(() {
-      notifier.startGame();
-      return null;
+      final timer = Timer.periodic(const Duration(seconds: 1), (t) {
+        if (timeCountDown.value > 0) {
+          timeCountDown.value -= 1;
+        } else {
+          t.cancel();
+          notifier.startGame(); // start only after countdown ends
+        }
+      });
+      return timer.cancel;
     }, []);
 
     return Scaffold(
@@ -78,7 +87,19 @@ class GameScreen extends HookConsumerWidget {
                   ),
               ],
             ),
-
+            if (timeCountDown.value > 0)
+              Center(
+                child: Text(
+                  timeCountDown.value == 1
+                      ? 'Start'
+                      : (timeCountDown.value - 1).toString(),
+                  style: TextStyle(
+                    fontSize: 100.h,
+                    color: Colors.white,
+                    fontWeight: .bold,
+                  ),
+                ),
+              ),
             Positioned(
               bottom: 20,
               right: 20,
