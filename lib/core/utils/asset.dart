@@ -7,4 +7,5 @@ class GameAssets {
   static String riverBackground = 'assets/images/ai_boat_2.png';
   static String logoImage = 'assets/images/logo.png';
   static String playButton = 'assets/images/play_button.png';
+  static String pandleIcon = 'assets/icons/pandle.png';
 }

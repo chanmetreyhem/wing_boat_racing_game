@@ -7,7 +7,6 @@ import 'package:wing_boat_racing_game/router/route_names.dart';
 
 class MenuScreen extends HookWidget {
   const MenuScreen({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

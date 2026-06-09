@@ -18,6 +18,7 @@ dependencies:
   flutter_hooks: ^0.21.3+1
   flutter_screenutil_plus: ^1.4.0
 
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

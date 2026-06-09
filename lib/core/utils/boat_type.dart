@@ -1,0 +1,3 @@
+enum BoatType {
+  player,ai
+}

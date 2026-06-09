@@ -1,13 +1,20 @@
+import 'dart:math';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
+import 'package:wing_boat_racing_game/core/utils/boat_type.dart';
+import 'package:wing_boat_racing_game/features/game/domain/game_state.dart';
+import 'package:wing_boat_racing_game/features/game/presentation/controllers/game_provider.dart';
 
-class Boat extends HookWidget {
+class Boat extends HookConsumerWidget {
+  final BoatType type;
   final String boatImage;
-  const Boat({super.key, required this.boatImage});
+  const Boat({super.key, required this.type, required this.boatImage});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final animationController = useAnimationController(
       duration: Duration(milliseconds: 1500),
     );
@@ -19,6 +26,8 @@ class Boat extends HookWidget {
         ),
       ),
     );
+    final game = ref.watch(gameProvider);
+    final notifier = ref.read(gameProvider.notifier);
 
     late double speed = 20;
     final startPosition = 40.w;
@@ -31,14 +40,29 @@ class Boat extends HookWidget {
       return null;
     }, const []);
 
+    useEffect(() {
+      if (type == BoatType.player) return null;
+
+      final timer = Timer.periodic(Duration(milliseconds: 300), (t) {
+        if (game.status == GameStatus.start) {
+          Random random = Random();
+          double randSpeed = 20 + random.nextDouble() * (40 - 20);
+          position.value += randSpeed;
+          Future.microtask(() {
+            notifier.checkWin(position.value);
+          });
+        }
+      });
+      return timer.cancel;
+    }, [game.status]);
+
     return AnimatedPositioned(
       duration: const Duration(milliseconds: 250),
-      bottom: position.value + floatingAnimation,
+      bottom: type == BoatType.ai
+          ? position.value
+          : game.position + floatingAnimation,
       curve: Curves.easeOutQuad,
       child: GestureDetector(
-        onTap: () {
-          position.value += speed;
-        },
         child: Container(
           width: 40.w,
           height: 80.h,
@@ -49,8 +73,10 @@ class Boat extends HookWidget {
           ),
           child: Column(
             children: [
-              Text("You", style: TextStyle(color: Colors.white)),
-              Text("${position.value}", style: TextStyle(color: Colors.white)),
+              Text(
+                type.name.toUpperCase(),
+                style: TextStyle(color: Colors.white),
+              ),
             ],
           ),
         ),
