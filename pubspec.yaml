@@ -17,6 +17,7 @@ dependencies:
   hooks_riverpod: ^3.3.1
   flutter_hooks: ^0.21.3+1
   flutter_screenutil_plus: ^1.4.0
+  icons_launcher: ^3.1.0
 
 
 dev_dependencies:
@@ -26,7 +27,6 @@ dev_dependencies:
   flutter_lints: ^6.0.0
 
 flutter:
-
   uses-material-design: true
   assets:
    - assets/images/
@@ -47,3 +47,9 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+  
+icons_launcher:
+  image_path: "assets/app_icon.png"
+  platforms:
+    android:
+      enable: true    

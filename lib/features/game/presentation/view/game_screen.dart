@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:wing_boat_racing_game/core/utils/asset.dart';
 import 'package:wing_boat_racing_game/core/utils/boat_type.dart';
 import 'package:wing_boat_racing_game/features/game/game.dart';
 import 'package:wing_boat_racing_game/features/game/presentation/controllers/game_provider.dart';
+import 'package:wing_boat_racing_game/features/game/presentation/widgets/river.dart';
 
 class GameScreen extends HookConsumerWidget {
   const GameScreen({super.key});
@@ -16,16 +18,17 @@ class GameScreen extends HookConsumerWidget {
     final isPressed = useState(false);
     final timeCountDown = useState(4);
 
-    final boatImages = [
-      'assets/images/player_boat.png',
-      'assets/images/ai_boat_1.png',
-      'assets/images/ai_boat_2.png',
-    ];
+    final notifier = ref.watch(gameProvider.notifier);
+    final game = ref.watch(gameProvider);
+    Timer? _timer;
 
-    final notifier = ref.read(gameProvider.notifier);
+    void startGame() {
+      timeCountDown.value = 4;
+      Future.microtask(() {
+        notifier.initGame();
+      });
 
-    useEffect(() {
-      final timer = Timer.periodic(const Duration(seconds: 1), (t) {
+      _timer = Timer.periodic(const Duration(seconds: 1), (t) {
         if (timeCountDown.value > 0) {
           timeCountDown.value -= 1;
         } else {
@@ -33,13 +36,28 @@ class GameScreen extends HookConsumerWidget {
           notifier.startGame(); // start only after countdown ends
         }
       });
-      return timer.cancel;
+    }
+
+    useEffect(() {
+      startGame();
+      // FIXED: Added parentheses () to actually execute the cancel function on unmount
+      return () => _timer?.cancel();
     }, []);
+
+    String formatDuration(Duration duration) {
+      String minutes = duration.inMinutes.toString().padLeft(2, '0');
+      String seconds = (duration.inSeconds % 60).toString().padLeft(2, '0');
+      String milliseconds = ((duration.inMilliseconds % 1000) ~/ 10)
+          .toString()
+          .padLeft(2, '0');
+      return "$minutes:$seconds.$milliseconds";
+    }
 
     return Scaffold(
       body: Container(
         color: Colors.cyan,
         child: Stack(
+          alignment: .center,
           children: [
             Positioned.fill(
               child: Image.asset(
@@ -49,44 +67,54 @@ class GameScreen extends HookConsumerWidget {
                 colorBlendMode: BlendMode.hardLight,
               ),
             ),
+
+            // time record
+            Positioned(
+              top: 50.h,
+              left: 10,
+              right: 0,
+              child: Text(
+                formatDuration(
+                  ref.read(gameProvider).elapsedTime ?? Duration.zero,
+                ),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+
             // river path
             Row(
               mainAxisAlignment: .center,
 
-              spacing: 30.w,
+              spacing: 13.h,
               children: [
-                for (int i = 0; i < 3; i++)
-                  Container(
-                    width: 40.w,
-
-                    color: Colors.black.withOpacity(0.1),
-                    child: Stack(
-                      alignment: .bottomCenter,
-                      children: [
-                        // finish line
-                        Positioned(
-                          bottom:
-                              ref.watch(
-                                gameProvider.select((s) => s.winDistance),
-                              ) +
-                              140,
-                          child: Container(
-                            width: 100.w,
-                            height: 8,
-                            color: Colors.red,
-                          ),
-                        ),
-
-                        // boat
-                        Boat(
-                          type: i == 0 ? BoatType.player : BoatType.ai,
-                          boatImage: boatImages[i],
-                        ),
-                      ],
-                    ),
+                River(
+                  boat: Boat(
+                    type: BoatType.player,
+                    boatImage: GameAssets.playerBoat,
+                    position: game.playerPosition,
                   ),
+                ),
+                River(
+                  boat: Boat(
+                    type: BoatType.ai,
+                    boatImage: GameAssets.aiBoat1,
+                    position: game.firstAIPosition,
+                  ),
+                ),
+                River(
+                  boat: Boat(
+                    type: BoatType.ai,
+                    boatImage: GameAssets.aiBoat2,
+                    position: game.secondAIPosition,
+                  ),
+                ),
               ],
             ),
+
             if (timeCountDown.value > 0)
               Center(
                 child: Text(
@@ -100,6 +128,7 @@ class GameScreen extends HookConsumerWidget {
                   ),
                 ),
               ),
+
             Positioned(
               bottom: 20,
               right: 20,
@@ -136,6 +165,70 @@ class GameScreen extends HookConsumerWidget {
                 ),
               ),
             ),
+
+            if (ref.read(gameProvider).isGameOver)
+              Positioned.fill(
+                child: Container(
+                  color: Colors.black54,
+                  alignment: .center,
+                  child: TweenAnimationBuilder(
+                    tween: Tween<double>(begin: 0, end: 1),
+                    duration: Duration(milliseconds: 300),
+                    curve: Curves.bounceOut,
+                    builder: (context, value, _) {
+                      return Container(
+                        width: 320.h * value,
+                        height: 300.h * value,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          gradient: LinearGradient(
+                            colors: [Colors.orangeAccent, Colors.deepOrange],
+                          ),
+                          borderRadius: BorderRadius.circular(20.h),
+                        ),
+                        child: Column(
+                          mainAxisSize: .min,
+                          mainAxisAlignment: .center,
+                          spacing: 20.h,
+                          children: [
+                            Text(
+                              ref.read(gameProvider).message ?? '',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: .bold,
+                                fontSize: 30.h,
+                              ),
+                            ),
+                            Text(
+                              '${game.elapsedTime!.inSeconds}s${game.elapsedTime!.inMilliseconds}ms',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: .normal,
+                                fontSize: 16.h,
+                              ),
+                            ),
+
+                            Row(
+                              mainAxisSize: .min,
+                              spacing: 20.h,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: () => {startGame()},
+                                  child: Text("Replay"),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () => {context.pop()},
+                                  child: Text("Menu"),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
           ],
         ),
       ),
