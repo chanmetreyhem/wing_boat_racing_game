@@ -4,7 +4,7 @@ import 'package:wing_boat_racing_game/core/theme/app_color.dart';
 import 'package:wing_boat_racing_game/core/theme/font_size.dart';
 
 class AppTextStyles {
-  static const TextTheme lightTextTheme = TextTheme(
+  static final TextTheme lightTextTheme = TextTheme(
     displayLarge: TextStyle(
       fontSize: AppSizes.display,
       fontWeight: FontWeight.bold,
