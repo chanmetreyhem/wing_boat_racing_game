@@ -13,15 +13,15 @@ class River extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       width: 60.h,
-      color: Colors.black.withOpacity(0.5),
+      //color: Colors.black.withOpacity(0.5),
       child: Stack(
         alignment: .bottomCenter,
         children: [
           // finish line
-          Positioned(
-            bottom: ref.watch(gameProvider.select((s) => s.winDistance)) + 140,
-            child: Container(width: 100.w, height: 8, color: Colors.red),
-          ),
+          // Positioned(
+          //   bottom: ref.watch(gameProvider.select((s) => s.winDistance)) + 140,
+          //   child: Container(width: 100.w, height: 8, color: Colors.red),
+          // ),
 
           // boat
           boat,

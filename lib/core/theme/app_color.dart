@@ -19,4 +19,35 @@ class AppColors {
   static const Color surfaceDark = Color(0xFF1E1E1E);
   static const Color textPrimaryDark = Color.fromARGB(255, 255, 255, 255);
   static const Color textSecondaryDark = Color(0xFF757575);
+
+  static const Color goldPrimary = Color(
+    0xFFE5B842,
+  ); // Main Khmer ornament gold
+  static const Color goldAccent = Color(0xFFFFF1A8); // Highlight/Glow gold
+  static const Color goldDark = Color(0xFF9E7A1D); // Shadow/Border gold
+
+  // --- Theme Backgrounds (River & Night Sky) ---
+  static const Color deepBlueDark = Color(
+    0xFF0F1A2C,
+  ); // Deep night sky background
+  static const Color riverBlueDark = Color(
+    0xFF13253B,
+  ); // Panel background (Dark)
+  static const Color riverBlueLight = Color(
+    0xFFEBF1F6,
+  ); // Soft sky tint (Light)
+  //static const Color surfaceLight = Color(0xFFFFFFFF);   // Pure white for panels
+
+  // --- UI Elements & Accents ---
+  static const Color buttonGreen = Color(0xFF6BB836); // "PLAY" / "SUBMIT" Green
+  static const Color rhythmCyan = Color(
+    0xFF26E6C7,
+  ); // "PERFECT" rhythm meter cyan
+  static const Color textDark = Color(
+    0xFF1A1A1A,
+  ); // Readable text for light mode
+  static const Color textLight = Color(
+    0xFFF5F5F5,
+  ); // Readable text for dark mode
+  static const Color textMuted = Color(0xFF8A9BB0);
 }

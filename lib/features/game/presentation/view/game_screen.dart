@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
+import 'package:wing_boat_racing_game/core/theme/app_color.dart';
 import 'package:wing_boat_racing_game/core/utils/asset.dart';
 import 'package:wing_boat_racing_game/core/utils/boat_type.dart';
 import 'package:wing_boat_racing_game/features/game/game.dart';
@@ -10,8 +11,8 @@ import 'package:wing_boat_racing_game/features/game/presentation/controllers/gam
 import 'package:wing_boat_racing_game/features/game/presentation/widgets/river.dart';
 
 class GameScreen extends HookConsumerWidget {
-  VoidCallback? onBackToMenu;
-  GameScreen({super.key, this.onBackToMenu});
+  final VoidCallback? onBackToMenu;
+  const GameScreen({super.key, this.onBackToMenu});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -55,7 +56,7 @@ class GameScreen extends HookConsumerWidget {
 
     return Scaffold(
       body: Container(
-        color: Colors.cyan,
+        color: AppColors.riverBlueDark,
         child: Stack(
           alignment: .center,
           children: [

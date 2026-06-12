@@ -4,7 +4,7 @@ import 'package:wing_boat_racing_game/core/theme/theme.dart';
 
 class AppTheme {
   static ThemeData get lightTheme => ThemeData(
-    fontFamily: GoogleFonts.googleSans().fontFamily,
+    fontFamily: GoogleFonts.orbitron().fontFamily,
     useMaterial3: true,
     brightness: Brightness.light,
     primaryColor: Colors.blue,
@@ -17,7 +17,7 @@ class AppTheme {
     ),
   );
   static ThemeData get darkTheme => ThemeData(
-    fontFamily: GoogleFonts.googleSans().fontFamily,
+    fontFamily: GoogleFonts.orbitron().fontFamily,
     brightness: Brightness.light,
     primaryColor: Colors.white,
     scaffoldBackgroundColor: Colors.black,
